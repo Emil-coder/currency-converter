@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-
 class FeesTable extends React.Component {
   render() {
     var { conversionRate, fee, total, originCurrency, destinationCurrency } = this.props;

@@ -26,6 +26,7 @@ router.get('/api/conversion', function (req, res, next) {
     destAmount = (parseFloat(originAmount, 10) * xRate).toFixed(2);
   }
 
+
   // random timeout to simulate api response times
   setTimeout(function () {
     res.json({ originAmount: originAmount, destAmount: destAmount, destCurrency: destCurrency, xRate: xRate })
@@ -38,6 +39,11 @@ router.get('/api/fees', function (req, res, next) {
   var destCurrency = req.query.destCurrency;
 
   var feeAmount = getFee(originAmount, originCurrency, destCurrency);
+
+  if (originAmount === "9") {
+    res.status(500).send('Server error');
+    return;
+  }
 
   // random timeout to simulate api response times
   setTimeout(function () {

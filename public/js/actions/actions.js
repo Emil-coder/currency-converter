@@ -1,5 +1,6 @@
 import axios from 'axios';
 import debounce from 'lodash.debounce';
+
 import { ActionTypes as types } from '../constants';
 
 export function changeOriginAmount(newAmount) {
@@ -11,21 +12,21 @@ export function changeOriginAmount(newAmount) {
 
 export function changeDestAmount(newAmount) {
   return {
-    type: "CHANGE_DESTINATION_AMOUNT",
+    type: types.CHANGE_DESTINATION_AMOUNT,
     data: { newAmount: newAmount }
   }
 }
 
 export function changeOriginCurrency(newCurrency) {
   return {
-    type: "CHANGE_ORIGIN_CURRENCY",
+    type: types.CHANGE_ORIGIN_CURRENCY,
     data: { newCurrency: newCurrency }
   }
 }
 
 export function changeDestCurrency(newCurrency) {
   return {
-    type: "CHANGE_DESTINATION_CURRENCY",
+    type: types.CHANGE_DESTINATION_CURRENCY,
     data: { newCurrency: newCurrency }
   }
 }
@@ -39,17 +40,17 @@ export function fetchConversionRate(payload) {
 
 function _makeConversionAjaxCall(payload, dispatch) {
 
-  dispatch({ type: "REQUEST_CONVERSION_RATE", data: payload });
+  dispatch({ type: types.REQUEST_CONVERSION_RATE, data: payload });
 
   // ajax call for destination amount
   axios.get('/api/conversion', {
     params: payload
   })
     .then((resp) => {
-      dispatch({ type: "RECEIVED_CONVERSION_RATE_SUCCESS", data: resp.data });
+      dispatch({ type: types.RECEIVED_CONVERSION_RATE_SUCCESS, data: resp.data });
     })
     .catch((err) => {
-      dispatch({ type: "RECEIVED_CONVERSION_RATE_FAILURE", data: err });
+      dispatch({ type: types.RECEIVED_CONVERSION_RATE_FAILURE, data: err });
     });
 }
 
@@ -60,25 +61,24 @@ export function fetchConversionRateAndFees(payload) {
   return (dispatch) => {
     makeConversionAndFeesAjaxCalls(payload, dispatch);
   }
-
 }
 
 function _makeConversionAndFeesAjaxCalls(payload, dispatch) {
 
-  dispatch({ type: "REQUEST_CONVERSION_RATE", data: payload });
+  dispatch({ type: types.REQUEST_CONVERSION_RATE, data: payload });
 
   // ajax call for destination amount
   axios.get('/api/conversion', {
     params: payload
   })
     .then((resp) => {
-      dispatch({ type: "RECEIVED_CONVERSION_RATE_SUCCESS", data: resp.data });
+      dispatch({ type: types.RECEIVED_CONVERSION_RATE_SUCCESS, data: resp.data });
 
       var feePayload = Object.assign({}, payload, { originAmount: resp.data.originAmount });
       dispatch(fetchFees(feePayload));
     })
     .catch((err) => {
-      dispatch({ type: "RECEIVED_CONVERSION_RATE_FAILURE", data: err });
+      dispatch({ type: types.RECEIVED_CONVERSION_RATE_FAILURE, data: err });
     });
 }
 
@@ -91,18 +91,18 @@ export function fetchFees(payload) {
 }
 
 function _makeFeeAjaxCall(payload, dispatch) {
-  dispatch({ type: "REQUEST_FEES", data: payload });
+  dispatch({ type: types.REQUEST_FEES, data: payload });
 
   //ajax call for destination amount
   axios.get('/api/fees', {
     params: payload
   })
     .then((resp) => {
-      dispatch({ type: "RECEIVED_FEES_SUCCESS", data: resp.data });
+      dispatch({ type: types.RECEIVED_FEES_SUCCESS, data: resp.data });
     })
     .catch((resp) => {
       var msg = getErrorMsg(resp);
-      dispatch({ type: "RECEIVED_[AJAX_CALL]_FAILURE", data: { msg: msg, failedCall: 'fees' } });
+      dispatch({ type: types.RECEIVED_AJAX_CALL_FAILURE, data: { msg: msg, failedCall: 'fees' } });
     });
 }
 
@@ -122,12 +122,3 @@ function getErrorMsg(resp) {
 
   return msg;
 }
-
-// on success ensure no error message
-// function clearErrorMessage() {
-//   if (this.state.errorMsg) {
-//     this.setState({
-//       errorMsg: ''
-//     })
-//   }
-// }
